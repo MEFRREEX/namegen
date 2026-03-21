@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Generator - HeroUI Style</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="glow-background"></div>
+
+    <div class="container">
+        <h1>Name Generator</h1>
+
+        <div class="form-group">
+            <label>Starting Sequence (Optional)</label>
+            <input type="text" id="startSequence" placeholder="e.g. Me, Str, Al" autocomplete="off">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Min Length</label>
+                <input type="number" id="minLength" value="5" min="1">
+            </div>
+            <div class="form-group">
+                <label>Max Length</label>
+                <input type="number" id="maxLength" value="10" min="1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" id="count" value="10" min="1">
+        </div>
+
+        <button id="generateBtn">Generate</button>
+
+        <div id="results" class="results-container"></div>
+
+        <div class="bookmarks-section">
+            <div class="bookmarks-header" onclick="toggleBookmarks()">
+                <span>Saved Bookmarks (<span id="bookmarkCount">0</span>)</span>
+                <span id="chevron">▼</span>
+            </div>
+            <div id="bookmarksList"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
