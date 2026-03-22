@@ -167,19 +167,30 @@ button#generateBtn:active {
     border: none;
     transition: 0.2s;
     background: rgba(255, 255, 255, 0.1);
-    color: var(--text-foreground);
+    color: var(--text-muted);
 }
 
 .btn-save:hover {
     background: var(--primary);
+    color: var(--text-foreground);
 }
 
 .btn-copy:hover {
     background: var(--success);
+    color: var(--text-foreground);
+}
+
+.btn-copy.copied {
+    color: var(--success);
+}
+
+.btn-copy.copied:hover {
+    color: var(--text-foreground);
 }
 
 .btn-delete:hover {
     background: var(--danger);
+    color: var(--text-foreground);
 }
 
 .bookmarks-section {

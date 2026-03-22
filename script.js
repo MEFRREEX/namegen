@@ -48,10 +48,10 @@ function copyToClipboard(text, btn) {
     navigator.clipboard.writeText(text).then(() => {
         const originalText = btn.textContent;
         btn.textContent = 'Copied!';
-        btn.style.color = '#17c964';
+        btn.classList.add('copied');
         setTimeout(() => {
             btn.textContent = originalText;
-            btn.style.color = '';
+            btn.classList.remove('copied');
         }, 1000);
     });
 }
