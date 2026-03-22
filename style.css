@@ -237,6 +237,22 @@ button#generateBtn:active {
     transform: scale(0.97);
 }
 
+button#generateBtn.generating {
+    animation: generatingPulse 0.75s ease;
+}
+
+@keyframes generatingPulse {
+    0% {
+        background-color: var(--primary);
+    }
+    50% {
+        background-color: #0077ff;
+    }
+    100% {
+        background-color: var(--primary);
+    }
+}
+
 .reset-btn {
     background-color: var(--danger);
     color: white;

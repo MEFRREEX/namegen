@@ -184,6 +184,11 @@ function generateNames(prefix, min, max, count, caseMode) {
 }
 
 document.getElementById('generateBtn').onclick = () => {
+    const generateBtn = document.getElementById('generateBtn');
+    
+    generateBtn.classList.add('generating');
+    setTimeout(() => generateBtn.classList.remove('generating'), 750);
+
     let min = parseInt(DOM.minLength.value) || 1;
     let max = parseInt(DOM.maxLength.value) || 1;
     const count = parseInt(DOM.count.value) || 1;
