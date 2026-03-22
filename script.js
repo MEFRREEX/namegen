@@ -165,6 +165,24 @@ function renderBookmarks() {
     });
 }
 
+function generateNames(prefix, min, max, count, caseMode) {
+    const names = [];
+    for (let i = 0; i < count; i++) {
+        const targetLen = Math.max(prefix.length, Math.floor(Math.random() * (max - min + 1)) + min);
+        let word = prefix;
+        while (word.length < targetLen) {
+            word += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+        }
+        if (caseMode === 'lowercase') {
+            word = word.toLowerCase();
+        } else if (caseMode === 'capitalize') {
+            word = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+        names.push(word);
+    }
+    return names;
+}
+
 document.getElementById('generateBtn').onclick = () => {
     let min = parseInt(DOM.minLength.value) || 1;
     let max = parseInt(DOM.maxLength.value) || 1;
@@ -174,24 +192,7 @@ document.getElementById('generateBtn').onclick = () => {
 
     if (min > max) [min, max] = [max, min];
 
-    state.generated = [];
-
-    for (let i = 0; i < count; i++) {
-        const targetLen = Math.max(prefix.length, Math.floor(Math.random() * (max - min + 1)) + min);
-
-        let word = prefix;
-        while (word.length < targetLen) {
-            word += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-        }
-
-        if (caseMode === 'lowercase') {
-            word = word.toLowerCase();
-        } else if (caseMode === 'capitalize') {
-            word = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-        }
-
-        state.generated.push(word);
-    }
+    state.generated = generateNames(prefix, min, max, count, caseMode);
     renderNames();
     saveState();
 };
@@ -199,5 +200,25 @@ document.getElementById('generateBtn').onclick = () => {
 [DOM.startSequence, DOM.minLength, DOM.maxLength, DOM.count].forEach(el => {
     el.oninput = saveState;
 });
+
+document.getElementById('resetBtn').onclick = function() {
+    const resetBtn = this;
+    resetBtn.classList.add('spinning');
+
+    DOM.startSequence.value = '';
+    DOM.minLength.value = 5;
+    DOM.maxLength.value = 10;
+    DOM.count.value = 10;
+    DOM.caseMode.value = 'lowercase';
+    document.getElementById('dropdownSelected').textContent = 'Lower';
+    document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+    document.querySelector('.dropdown-item[data-value="lowercase"]').classList.add('selected');
+
+    state.generated = generateNames('', 5, 10, 10, 'lowercase');
+    renderNames();
+    saveState();
+
+    setTimeout(() => resetBtn.classList.remove('spinning'), 500);
+};
 
 loadState();

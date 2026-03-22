@@ -213,8 +213,14 @@ input:focus {
     color: var(--text-muted);
 }
 
+.generate-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 button#generateBtn {
-    width: 100%;
+    flex: 1;
     background-color: var(--primary);
     color: white;
     border: none;
@@ -229,6 +235,46 @@ button#generateBtn {
 
 button#generateBtn:active {
     transform: scale(0.97);
+}
+
+.reset-btn {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px 0 rgba(243, 18, 96, 0.4);
+    transition: 0.2s;
+    min-width: 52px;
+}
+
+.reset-btn svg {
+    filter: drop-shadow(0 0 0 currentColor);
+}
+
+.reset-btn.spinning svg {
+    animation: resetSpin 0.5s ease;
+}
+
+@keyframes resetSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.reset-btn:hover {
+    opacity: 0.9;
+}
+
+.reset-btn:active {
+    transform: scale(0.95);
 }
 
 .results-container {
