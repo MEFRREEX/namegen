@@ -3,14 +3,18 @@ const DOM = {
     minLength: document.getElementById('minLength'),
     maxLength: document.getElementById('maxLength'),
     count: document.getElementById('count'),
+    caseMode: document.getElementById('caseMode'),
     results: document.getElementById('results'),
     bookmarksList: document.getElementById('bookmarksList'),
     bookmarkCount: document.getElementById('bookmarkCount')
 };
 
+const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
 let state = {
     generated: [],
-    bookmarks: []
+    bookmarks: [],
+    caseMode: 'lowercase'
 };
 
 function loadState() {
@@ -21,9 +25,11 @@ function loadState() {
         DOM.minLength.value = state.minLength || 5;
         DOM.maxLength.value = state.maxLength || 10;
         DOM.count.value = state.count || 10;
+        DOM.caseMode.value = state.caseMode || 'lowercase';
         renderNames();
         renderBookmarks();
     }
+    initDropdown();
 }
 
 function saveState() {
@@ -32,7 +38,8 @@ function saveState() {
         startSequence: DOM.startSequence.value,
         minLength: DOM.minLength.value,
         maxLength: DOM.maxLength.value,
-        count: DOM.count.value
+        count: DOM.count.value,
+        caseMode: DOM.caseMode.value
     };
     localStorage.setItem('data', JSON.stringify(dataToSave));
 }
@@ -42,6 +49,53 @@ function toggleBookmarks() {
     const chev = document.getElementById('chevron');
     list.classList.toggle('active');
     chev.textContent = list.classList.contains('active') ? '▲' : '▼';
+}
+
+function initDropdown() {
+    const dropdown = document.getElementById('caseModeDropdown');
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    const selected = document.getElementById('dropdownSelected');
+    const hiddenInput = document.getElementById('caseMode');
+    const items = dropdown.querySelectorAll('.dropdown-item');
+
+    trigger.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('active');
+        trigger.classList.toggle('active');
+    };
+
+    items.forEach(item => {
+        item.onclick = (e) => {
+            e.stopPropagation();
+            const value = item.dataset.value;
+            const label = item.querySelector('.dropdown-item-label').textContent;
+            
+            hiddenInput.value = value;
+            selected.textContent = label;
+            
+            items.forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            
+            menu.classList.remove('active');
+            trigger.classList.remove('active');
+            
+            saveState();
+        };
+    });
+
+    document.addEventListener('click', () => {
+        menu.classList.remove('active');
+        trigger.classList.remove('active');
+    });
+
+    const savedValue = hiddenInput.value;
+    const savedItem = dropdown.querySelector(`.dropdown-item[data-value="${savedValue}"]`);
+    if (savedItem) {
+        const savedLabel = savedItem.querySelector('.dropdown-item-label').textContent;
+        selected.textContent = savedLabel;
+        savedItem.classList.add('selected');
+    }
 }
 
 function copyToClipboard(text, btn) {
@@ -116,18 +170,24 @@ document.getElementById('generateBtn').onclick = () => {
     let max = parseInt(DOM.maxLength.value) || 1;
     const count = parseInt(DOM.count.value) || 1;
     const prefix = DOM.startSequence.value.trim();
+    const caseMode = DOM.caseMode.value;
 
     if (min > max) [min, max] = [max, min];
 
     state.generated = [];
-    const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
     for (let i = 0; i < count; i++) {
         const targetLen = Math.max(prefix.length, Math.floor(Math.random() * (max - min + 1)) + min);
 
         let word = prefix;
         while (word.length < targetLen) {
-            word += alphabet[Math.floor(Math.random() * alphabet.length)];
+            word += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+        }
+
+        if (caseMode === 'lowercase') {
+            word = word.toLowerCase();
+        } else if (caseMode === 'capitalize') {
+            word = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         }
 
         state.generated.push(word);
