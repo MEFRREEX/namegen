@@ -121,35 +121,76 @@ body {
 }
 
 .container {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Card Styles */
+.card {
     background-color: var(--bg-content);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    width: 100%;
-    max-width: 480px;
     border-radius: var(--radius-card);
-    padding: 32px;
+    padding: 24px;
     border: 1px solid var(--border-color);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 28px;
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-foreground);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Title Card */
+.title-card {
+    border: 2px dashed var(--border-color);
+    background-color: rgba(24, 24, 27, 0.3);
     text-align: center;
+    padding: 28px 24px;
+}
+
+.title-card h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: var(--text-foreground);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.title-description {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .form-group {
     margin-bottom: 20px;
 }
 
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
 .form-row {
     display: flex;
     gap: 16px;
+    margin-bottom: 20px;
 }
 
 .form-row .form-group {
     flex: 1;
+    margin-bottom: 0;
 }
 
 label {
@@ -228,7 +269,7 @@ input:focus {
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.2s ease;
-    z-index: 100;
+    z-index: 1000;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
@@ -419,7 +460,7 @@ button#generateBtn.generating {
 }
 
 .results-container {
-    margin-top: 28px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -483,9 +524,7 @@ button#generateBtn.generating {
 }
 
 .bookmarks-section {
-    margin-top: 20px;
-    border-top: 1px solid var(--border-color);
-    padding-top: 10px;
+    margin-top: 0;
 }
 
 .bookmarks-header {
@@ -703,4 +742,16 @@ body.modal-open {
 
 .modal-btn-confirm:hover {
     opacity: 0.9;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    body {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .title-card {
+        margin-top: 0;
+    }
 }
