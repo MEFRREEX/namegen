@@ -14,6 +14,23 @@
         <h1>Name Generator</h1>
 
         <div class="form-group">
+            <label>Alphabet Scheme</label>
+            <div class="dropdown" id="schemeDropdown">
+                <div class="dropdown-trigger">
+                    <span class="dropdown-selected" id="schemeSelected">English (a-z)</span>
+                    <svg class="dropdown-arrow" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </div>
+                <div class="dropdown-menu" id="schemeMenu">
+                    <div class="dropdown-item-add" id="addSchemeItem">
+                        <span class="dropdown-item-label">+ Add Scheme</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label>Starting Sequence (Optional)</label>
             <input type="text" id="startSequence" placeholder="e.g. Me, Str, Al" autocomplete="off">
         </div>
@@ -96,6 +113,41 @@
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
                 <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Delete All</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addSchemeModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-body">
+                <h3 class="modal-title">Add New Scheme</h3>
+                <div class="scheme-form">
+                    <div class="form-group">
+                        <label>Scheme Name</label>
+                        <input type="text" id="newSchemeName" placeholder="e.g. Hexadecimal">
+                    </div>
+                    <div class="form-group">
+                        <label>Characters</label>
+                        <input type="text" id="newSchemeChars" placeholder="e.g. 0123456789abcdef">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="closeAddSchemeModal">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="confirmAddSchemeBtn">Add Scheme</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteSchemeModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-body">
+                <h3 class="modal-title">Delete Scheme</h3>
+                <p class="modal-desc">Are you sure you want to delete this scheme? This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="closeDeleteSchemeModal">Cancel</button>
+                <button class="modal-btn modal-btn-danger" id="confirmDeleteSchemeBtn">Delete</button>
             </div>
         </div>
     </div>

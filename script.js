@@ -9,27 +9,45 @@ const DOM = {
     bookmarkCount: document.getElementById('bookmarkCount')
 };
 
-const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+const DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
+const DEFAULT_SCHEMES = {
+    'default': { name: 'English (a-z)', alphabet: DEFAULT_ALPHABET, isDefault: true },
+    'russian': { name: 'Russian (а-я)', alphabet: 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя', isDefault: true },
+    'ukrainian': { name: 'Ukrainian (а-я)', alphabet: 'абвгдеєжзиіїйклмнопрстуфхцчшщьюя', isDefault: true }
+};
 
 let state = {
     generated: [],
     bookmarks: [],
-    caseMode: 'lowercase'
+    caseMode: 'lowercase',
+    schemes: { ...DEFAULT_SCHEMES },
+    currentScheme: 'default'
 };
+
+let currentAlphabet = DEFAULT_ALPHABET;
+let schemeToDelete = null;
 
 function loadState() {
     const saved = localStorage.getItem('data');
     if (saved) {
-        state = JSON.parse(saved);
-        DOM.startSequence.value = state.startSequence || '';
-        DOM.minLength.value = state.minLength || 5;
-        DOM.maxLength.value = state.maxLength || 10;
-        DOM.count.value = state.count || 10;
-        DOM.caseMode.value = state.caseMode || 'lowercase';
+        const parsed = JSON.parse(saved);
+        state.generated = parsed.generated || [];
+        state.bookmarks = parsed.bookmarks || [];
+        state.caseMode = parsed.caseMode || 'lowercase';
+        state.schemes = parsed.schemes ? { ...DEFAULT_SCHEMES, ...parsed.schemes } : { ...DEFAULT_SCHEMES };
+        state.currentScheme = parsed.currentScheme || 'default';
+        currentAlphabet = state.schemes[state.currentScheme]?.alphabet || DEFAULT_ALPHABET;
+        
+        DOM.startSequence.value = parsed.startSequence || '';
+        DOM.minLength.value = parsed.minLength || 5;
+        DOM.maxLength.value = parsed.maxLength || 10;
+        DOM.count.value = parsed.count || 10;
         renderNames();
     }
     renderBookmarks();
     initDropdown();
+    initSchemeDropdown();
 }
 
 function saveState() {
@@ -39,7 +57,9 @@ function saveState() {
         minLength: DOM.minLength.value,
         maxLength: DOM.maxLength.value,
         count: DOM.count.value,
-        caseMode: DOM.caseMode.value
+        caseMode: DOM.caseMode.value,
+        schemes: state.schemes,
+        currentScheme: state.currentScheme
     };
     localStorage.setItem('data', JSON.stringify(dataToSave));
 }
@@ -118,6 +138,168 @@ function initDropdown() {
     }
 }
 
+function initSchemeDropdown() {
+    const dropdown = document.getElementById('schemeDropdown');
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const menu = document.getElementById('schemeMenu');
+    const selected = document.getElementById('schemeSelected');
+    const addSchemeItem = document.getElementById('addSchemeItem');
+
+    renderSchemeMenu();
+
+    trigger.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('active');
+        trigger.classList.toggle('active');
+    };
+
+    addSchemeItem.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.remove('active');
+        trigger.classList.remove('active');
+        openAddSchemeModal();
+    };
+
+    document.addEventListener('click', () => {
+        menu.classList.remove('active');
+        trigger.classList.remove('active');
+    });
+}
+
+function openAddSchemeModal() {
+    const modal = document.getElementById('addSchemeModal');
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
+    document.getElementById('newSchemeName').value = '';
+    document.getElementById('newSchemeChars').value = '';
+    document.getElementById('newSchemeName').focus();
+}
+
+function closeAddSchemeModal() {
+    const modal = document.getElementById('addSchemeModal');
+    modal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+}
+
+function confirmAddScheme() {
+    const nameInput = document.getElementById('newSchemeName');
+    const charsInput = document.getElementById('newSchemeChars');
+
+    const name = nameInput.value.trim();
+    const chars = charsInput.value.trim();
+
+    if (!name || !chars) {
+        alert('Please enter both scheme name and characters');
+        return;
+    }
+
+    const schemeId = 'custom_' + Date.now();
+    state.schemes[schemeId] = { name: `${name} (${chars})`, alphabet: chars, isDefault: false };
+    state.currentScheme = schemeId;
+    currentAlphabet = chars;
+
+    renderSchemeMenu();
+    saveState();
+    closeAddSchemeModal();
+}
+
+function renderSchemeMenu() {
+    const menu = document.getElementById('schemeMenu');
+    const selected = document.getElementById('schemeSelected');
+    const addSchemeItem = document.getElementById('addSchemeItem');
+    const trigger = document.querySelector('#schemeDropdown .dropdown-trigger');
+
+    menu.innerHTML = '';
+
+    Object.keys(state.schemes).forEach(schemeId => {
+        const scheme = state.schemes[schemeId];
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.dataset.value = schemeId;
+        item.dataset.alphabet = scheme.alphabet;
+
+        const deleteBtn = scheme.isDefault ? '' : `
+            <button class="scheme-delete-btn" data-scheme="${schemeId}" title="Delete scheme">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12z"/>
+                </svg>
+            </button>
+        `;
+
+        item.innerHTML = `
+            <div class="dropdown-item-content">
+                <span class="dropdown-item-label">${scheme.name}</span>
+                <span class="dropdown-item-desc">${scheme.alphabet}</span>
+            </div>
+            <div class="dropdown-item-actions">
+                ${deleteBtn}
+            </div>
+        `;
+
+        if (schemeId === state.currentScheme) {
+            item.classList.add('selected');
+            selected.textContent = scheme.name;
+        }
+
+        item.onclick = (e) => {
+            if (e.target.closest('.scheme-delete-btn')) return;
+            e.stopPropagation();
+            state.currentScheme = schemeId;
+            currentAlphabet = scheme.alphabet;
+            selected.textContent = scheme.name;
+            menu.classList.remove('active');
+            trigger.classList.remove('active');
+            renderSchemeMenu();
+            saveState();
+        };
+
+        const deleteBtnEl = item.querySelector('.dropdown-item-actions .scheme-delete-btn');
+        if (deleteBtnEl) {
+            deleteBtnEl.onclick = (e) => {
+                e.stopPropagation();
+                const schemeIdToDelete = e.target.closest('.scheme-delete-btn').dataset.scheme;
+                deleteScheme(schemeIdToDelete);
+            };
+        }
+
+        menu.appendChild(item);
+    });
+
+    menu.appendChild(addSchemeItem);
+}
+
+function deleteScheme(schemeId) {
+    if (state.schemes[schemeId]?.isDefault) {
+        alert('Cannot delete the default scheme');
+        return;
+    }
+
+    schemeToDelete = schemeId;
+    const modal = document.getElementById('deleteSchemeModal');
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
+}
+
+function closeDeleteSchemeModal() {
+    const modal = document.getElementById('deleteSchemeModal');
+    modal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+    schemeToDelete = null;
+}
+
+function confirmDeleteScheme() {
+    if (schemeToDelete) {
+        delete state.schemes[schemeToDelete];
+        if (state.currentScheme === schemeToDelete) {
+            state.currentScheme = 'default';
+            currentAlphabet = DEFAULT_ALPHABET;
+        }
+        renderSchemeMenu();
+        saveState();
+    }
+    closeDeleteSchemeModal();
+}
+
 function copyToClipboard(text, btn) {
     navigator.clipboard.writeText(text).then(() => {
         const originalText = btn.textContent;
@@ -185,13 +367,13 @@ function renderBookmarks() {
     });
 }
 
-function generateNames(prefix, min, max, count, caseMode) {
+function generateNames(prefix, min, max, count, caseMode, alphabet) {
     const names = [];
     for (let i = 0; i < count; i++) {
         const targetLen = Math.max(prefix.length, Math.floor(Math.random() * (max - min + 1)) + min);
         let word = prefix;
         while (word.length < targetLen) {
-            word += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+            word += alphabet[Math.floor(Math.random() * alphabet.length)];
         }
         if (caseMode === 'lowercase') {
             word = word.toLowerCase();
@@ -205,7 +387,7 @@ function generateNames(prefix, min, max, count, caseMode) {
 
 document.getElementById('generateBtn').onclick = () => {
     const generateBtn = document.getElementById('generateBtn');
-    
+
     generateBtn.classList.add('generating');
     setTimeout(() => generateBtn.classList.remove('generating'), 750);
 
@@ -217,7 +399,7 @@ document.getElementById('generateBtn').onclick = () => {
 
     if (min > max) [min, max] = [max, min];
 
-    state.generated = generateNames(prefix, min, max, count, caseMode);
+    state.generated = generateNames(prefix, min, max, count, caseMode, currentAlphabet);
     renderNames();
     saveState();
 };
@@ -239,7 +421,7 @@ document.getElementById('resetBtn').onclick = function() {
     document.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
     document.querySelector('.dropdown-item[data-value="lowercase"]').classList.add('selected');
 
-    state.generated = generateNames('', 5, 10, 10, 'lowercase');
+    state.generated = generateNames('', 5, 10, 10, 'lowercase', currentAlphabet);
     renderNames();
     saveState();
 
@@ -251,9 +433,27 @@ document.getElementById('clearAllBookmarksBtn').onclick = openDeleteAllModal;
 document.getElementById('modalCancelBtn').onclick = closeDeleteAllModal;
 document.getElementById('modalConfirmBtn').onclick = deleteAllBookmarks;
 
+document.getElementById('closeAddSchemeModal').onclick = closeAddSchemeModal;
+document.getElementById('confirmAddSchemeBtn').onclick = confirmAddScheme;
+
+document.getElementById('closeDeleteSchemeModal').onclick = closeDeleteSchemeModal;
+document.getElementById('confirmDeleteSchemeBtn').onclick = confirmDeleteScheme;
+
 document.getElementById('confirmModal').onclick = (e) => {
     if (e.target.id === 'confirmModal') {
         closeDeleteAllModal();
+    }
+};
+
+document.getElementById('addSchemeModal').onclick = (e) => {
+    if (e.target.id === 'addSchemeModal') {
+        closeAddSchemeModal();
+    }
+};
+
+document.getElementById('deleteSchemeModal').onclick = (e) => {
+    if (e.target.id === 'deleteSchemeModal') {
+        closeDeleteSchemeModal();
     }
 };
 
