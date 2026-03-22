@@ -78,6 +78,25 @@
                 <span id="chevron">▼</span>
             </div>
             <div id="bookmarksList"></div>
+            <button id="clearAllBookmarksBtn" class="clear-all-btn" title="Delete all bookmarks">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12z"/>
+                </svg>
+                Delete All Bookmarks
+            </button>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-body">
+                <h3 class="modal-title">Delete All Bookmarks</h3>
+                <p class="modal-desc">This action cannot be undone. All saved bookmarks will be permanently removed.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Delete All</button>
+            </div>
         </div>
     </div>
 

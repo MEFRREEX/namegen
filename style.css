@@ -233,6 +233,10 @@ button#generateBtn {
     transition: 0.2s;
 }
 
+button#generateBtn:hover {
+    opacity: 0.9;
+}
+
 button#generateBtn:active {
     transform: scale(0.97);
 }
@@ -378,6 +382,35 @@ button#generateBtn.generating {
     color: var(--text-foreground);
 }
 
+.clear-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.clear-all-btn:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: white;
+}
+
+.clear-all-btn:active {
+    transform: scale(0.98);
+}
+
 #bookmarksList {
     display: none;
     flex-direction: column;
@@ -403,4 +436,120 @@ button#generateBtn.generating {
 ::-webkit-scrollbar-thumb {
     background: var(--border-color);
     border-radius: 10px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: modalOverlayFadeIn 0.2s ease forwards;
+}
+
+@keyframes modalOverlayFadeIn {
+    from {
+        background: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+    }
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.modal {
+    background-color: #18181B;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+}
+
+.modal-overlay.active .modal {
+    animation: modalFadeIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+    from {
+        transform: scale(0.95) translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-foreground);
+    margin-bottom: 8px;
+}
+
+.modal-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: var(--radius-button);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.modal-btn:active {
+    transform: scale(0.97);
+}
+
+.modal-btn-cancel {
+    background: var(--bg-input);
+    color: var(--text-muted);
+}
+
+.modal-btn-cancel:hover {
+    background: var(--bg-input-hover);
+    color: var(--text-foreground);
+}
+
+.modal-btn-confirm {
+    background: var(--danger);
+    color: white;
+}
+
+.modal-btn-confirm:hover {
+    opacity: 0.9;
 }

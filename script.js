@@ -51,6 +51,26 @@ function toggleBookmarks() {
     chev.textContent = list.classList.contains('active') ? '▲' : '▼';
 }
 
+function openDeleteAllModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
+}
+
+function closeDeleteAllModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+}
+
+function deleteAllBookmarks() {
+    state.bookmarks = [];
+    saveState();
+    renderBookmarks();
+    renderNames();
+    closeDeleteAllModal();
+}
+
 function initDropdown() {
     const dropdown = document.getElementById('caseModeDropdown');
     const trigger = dropdown.querySelector('.dropdown-trigger');
@@ -224,6 +244,17 @@ document.getElementById('resetBtn').onclick = function() {
     saveState();
 
     setTimeout(() => resetBtn.classList.remove('spinning'), 500);
+};
+
+document.getElementById('clearAllBookmarksBtn').onclick = openDeleteAllModal;
+
+document.getElementById('modalCancelBtn').onclick = closeDeleteAllModal;
+document.getElementById('modalConfirmBtn').onclick = deleteAllBookmarks;
+
+document.getElementById('confirmModal').onclick = (e) => {
+    if (e.target.id === 'confirmModal') {
+        closeDeleteAllModal();
+    }
 };
 
 loadState();
