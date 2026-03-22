@@ -61,6 +61,7 @@ function addBookmark(name) {
         state.bookmarks.unshift(name);
         saveState();
         renderBookmarks();
+        renderNames();
     }
 }
 
@@ -68,6 +69,7 @@ function removeBookmark(name) {
     state.bookmarks = state.bookmarks.filter(b => b !== name);
     saveState();
     renderBookmarks();
+    renderNames();
 }
 
 function renderNames() {
@@ -75,15 +77,17 @@ function renderNames() {
     state.generated.forEach(name => {
         const item = document.createElement('div');
         item.className = 'result-item';
+        const isBookmarked = state.bookmarks.includes(name);
         item.innerHTML = `
             <span>${name}</span>
             <div class="action-btns">
                 <button class="btn-small btn-copy">Copy</button>
-                <button class="btn-small btn-save">Save</button>
+                <button class="btn-small ${isBookmarked ? 'btn-delete' : 'btn-save'}">${isBookmarked ? 'Delete' : 'Save'}</button>
             </div>
         `;
         item.querySelector('.btn-copy').onclick = (e) => copyToClipboard(name, e.target);
-        item.querySelector('.btn-save').onclick = () => addBookmark(name);
+        const actionBtn = item.querySelector(isBookmarked ? '.btn-delete' : '.btn-save');
+        actionBtn.onclick = () => isBookmarked ? removeBookmark(name) : addBookmark(name);
         DOM.results.appendChild(item);
     });
 }
