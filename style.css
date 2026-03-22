@@ -148,6 +148,11 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
+.settings-card {
+    position: relative;
+    z-index: 2;
+}
+
 /* Title Card */
 .title-card {
     border: 2px dashed var(--border-color);
