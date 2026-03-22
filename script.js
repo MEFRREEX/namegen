@@ -27,6 +27,38 @@ let state = {
 
 let currentAlphabet = DEFAULT_ALPHABET;
 let schemeToDelete = null;
+const MAX_TOASTS = 3;
+
+function showToast(message, type = 'error') {
+    const container = document.getElementById('toastContainer');
+    
+    const toasts = container.querySelectorAll('.toast');
+    if (toasts.length >= MAX_TOASTS) {
+        toasts[0].remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+                <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    `;
+    
+    container.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+        toast.classList.add('active');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 function loadState() {
     const saved = localStorage.getItem('data');
@@ -189,7 +221,7 @@ function confirmAddScheme() {
     const chars = charsInput.value.trim();
 
     if (!name || !chars) {
-        alert('Please enter both scheme name and characters');
+        showToast('Please enter both scheme name and characters');
         return;
     }
 
@@ -270,7 +302,7 @@ function renderSchemeMenu() {
 
 function deleteScheme(schemeId) {
     if (state.schemes[schemeId]?.isDefault) {
-        alert('Cannot delete the default scheme');
+        showToast('Cannot delete the default scheme');
         return;
     }
 
