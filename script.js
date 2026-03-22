@@ -27,8 +27,8 @@ function loadState() {
         DOM.count.value = state.count || 10;
         DOM.caseMode.value = state.caseMode || 'lowercase';
         renderNames();
-        renderBookmarks();
     }
+    renderBookmarks();
     initDropdown();
 }
 
