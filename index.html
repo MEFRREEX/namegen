@@ -7,18 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="glow-background"></div>
-
     <div id="toastContainer" class="toast-container"></div>
 
     <div class="container">
-        <!-- Title Card -->
-        <div class="card title-card">
-            <h1>Name Generator</h1>
-            <p class="title-description">Generate random names based on customizable alphabet schemes and patterns. Save your favorites to bookmarks for easy access.</p>
-        </div>
-
         <!-- Settings Card -->
         <div class="card settings-card">
             <h2 class="card-title">Settings</h2>
@@ -72,16 +63,22 @@
                     </div>
                     <div class="dropdown-menu" id="dropdownMenu">
                         <div class="dropdown-item" data-value="lowercase">
-                            <span class="dropdown-item-label">Lower</span>
-                            <span class="dropdown-item-desc">All lower case</span>
+                            <div class="dropdown-item-content">
+                                <span class="dropdown-item-label">Lower</span>
+                                <span class="dropdown-item-desc">All lower case</span>
+                            </div>
                         </div>
                         <div class="dropdown-item" data-value="capitalize">
-                            <span class="dropdown-item-label">Capitalize</span>
-                            <span class="dropdown-item-desc">First letter upper case</span>
+                            <div class="dropdown-item-content">
+                                <span class="dropdown-item-label">Capitalize</span>
+                                <span class="dropdown-item-desc">First letter upper case</span>
+                            </div>
                         </div>
                         <div class="dropdown-item" data-value="preserve">
-                            <span class="dropdown-item-label">Preserve</span>
-                            <span class="dropdown-item-desc">From starting sequence</span>
+                            <div class="dropdown-item-content">
+                                <span class="dropdown-item-label">Preserve</span>
+                                <span class="dropdown-item-desc">From starting sequence</span>
+                            </div>
                         </div>
                     </div>
                     <input type="hidden" id="caseMode" value="lowercase">
@@ -122,6 +119,12 @@
                     Delete All
                 </button>
             </div>
+        </div>
+
+        <!-- Title Card -->
+        <div class="card title-card">
+            <h2 class="card-title">How to use</h2>
+            <p class="title-description">Specify generation parameters like alphabet scheme, length, and starting sequence. Generate random names and save your favorites to bookmarks for easy access.</p>
         </div>
     </div>
 

@@ -107,19 +107,6 @@ body {
     overflow-x: hidden;
 }
 
-.glow-background {
-    position: fixed;
-    top: -10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60vw;
-    height: 60vh;
-    background: radial-gradient(circle, rgba(0,111,238,0.15) 0%, rgba(0,0,0,0) 60%);
-    filter: blur(60px);
-    z-index: -1;
-    pointer-events: none;
-}
-
 .container {
     width: 100%;
     max-width: 480px;
@@ -156,27 +143,15 @@ body {
 /* Title Card */
 .title-card {
     border: 2px dashed var(--border-color);
-    background-color: rgba(24, 24, 27, 0.3);
-    text-align: center;
+    background-color: rgba(24, 24, 27, 0.5);
+    text-align: left;
     padding: 28px 24px;
-}
-
-.title-card h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    background: var(--text-foreground);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .title-description {
     font-size: 14px;
     color: var(--text-muted);
     line-height: 1.5;
-    max-width: 400px;
-    margin: 0 auto;
 }
 
 .form-group {
