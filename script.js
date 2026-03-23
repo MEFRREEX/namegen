@@ -6,7 +6,10 @@ const DOM = {
     caseMode: document.getElementById('caseMode'),
     results: document.getElementById('results'),
     bookmarksList: document.getElementById('bookmarksList'),
-    bookmarkCount: document.getElementById('bookmarkCount')
+    bookmarkCount: document.getElementById('bookmarkCount'),
+    sliderThumb: document.getElementById('sliderThumb'),
+    sliderFill: document.getElementById('sliderFill'),
+    quantitySlider: document.getElementById('quantitySlider')
 };
 
 const DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
@@ -28,6 +31,12 @@ let state = {
 let currentAlphabet = DEFAULT_ALPHABET;
 let schemeToDelete = null;
 const MAX_TOASTS = 3;
+
+// Slider state
+const SLIDER_MIN = 1;
+const SLIDER_MAX = 100;
+const SLIDER_STEP = 5;
+let isDragging = false;
 
 function showToast(message, type = 'error') {
     const container = document.getElementById('toastContainer');
@@ -70,7 +79,7 @@ function loadState() {
         state.schemes = parsed.schemes ? { ...DEFAULT_SCHEMES, ...parsed.schemes } : { ...DEFAULT_SCHEMES };
         state.currentScheme = parsed.currentScheme || 'default';
         currentAlphabet = state.schemes[state.currentScheme]?.alphabet || DEFAULT_ALPHABET;
-        
+
         DOM.startSequence.value = parsed.startSequence || '';
         DOM.minLength.value = parsed.minLength || 5;
         DOM.maxLength.value = parsed.maxLength || 10;
@@ -80,6 +89,8 @@ function loadState() {
     renderBookmarks();
     initDropdown();
     initSchemeDropdown();
+    initSlider();
+    updateSlider(parseInt(DOM.count.value) || 10);
 }
 
 function saveState() {
@@ -94,6 +105,82 @@ function saveState() {
         currentScheme: state.currentScheme
     };
     localStorage.setItem('data', JSON.stringify(dataToSave));
+}
+
+function initSlider() {
+    const sliderContainer = DOM.quantitySlider;
+    const sliderInput = DOM.count;
+
+    DOM.sliderThumb.addEventListener('mousedown', startDrag);
+    DOM.sliderThumb.addEventListener('touchstart', startDrag, { passive: false });
+
+    sliderContainer.addEventListener('click', handleTrackClick);
+    sliderInput.addEventListener('input', handleInputChange);
+
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+
+        document.addEventListener('mousemove', handleDrag);
+        document.addEventListener('touchmove', handleDrag, { passive: false });
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+    }
+
+    function handleDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const trackRect = DOM.sliderThumb.parentElement.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const offsetX = clientX - trackRect.left;
+        const percentage = Math.max(0, Math.min(1, offsetX / trackRect.width));
+        const rawValue = SLIDER_MIN + percentage * (SLIDER_MAX - SLIDER_MIN);
+        const value = Math.round(rawValue / SLIDER_STEP) * SLIDER_STEP;
+
+        updateSlider(Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, value)));
+    }
+
+    function endDrag() {
+        isDragging = false;
+
+        document.removeEventListener('mousemove', handleDrag);
+        document.removeEventListener('touchmove', handleDrag);
+        document.removeEventListener('mouseup', endDrag);
+        document.removeEventListener('touchend', endDrag);
+
+        saveState();
+    }
+
+    function handleTrackClick(e) {
+        if (e.target === DOM.sliderThumb) return;
+
+        const trackRect = DOM.sliderThumb.parentElement.getBoundingClientRect();
+        const offsetX = e.clientX - trackRect.left;
+        const percentage = Math.max(0, Math.min(1, offsetX / trackRect.width));
+        const rawValue = SLIDER_MIN + percentage * (SLIDER_MAX - SLIDER_MIN);
+        const value = Math.round(rawValue / SLIDER_STEP) * SLIDER_STEP;
+
+        updateSlider(Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, value)));
+        saveState();
+    }
+
+    function handleInputChange(e) {
+        const value = parseInt(e.target.value) || SLIDER_MIN;
+        updateSlider(value, false);
+    }
+}
+
+function updateSlider(value, animate = true) {
+    const sliderValue = Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, value));
+    const percentage = ((sliderValue - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100;
+
+    DOM.sliderFill.style.width = `${percentage}%`;
+    DOM.sliderThumb.style.left = `${percentage}%`;
+
+    if (value >= SLIDER_MIN && value <= SLIDER_MAX) {
+        DOM.count.value = value;
+    }
 }
 
 function toggleBookmarks() {
@@ -455,6 +542,7 @@ document.getElementById('resetBtn').onclick = function() {
 
     state.generated = generateNames('', 5, 10, 10, 'lowercase', currentAlphabet);
     renderNames();
+    updateSlider(10);
     saveState();
 
     setTimeout(() => resetBtn.classList.remove('spinning'), 500);

@@ -49,7 +49,19 @@
 
             <div class="form-group">
                 <label>Quantity</label>
-                <input type="number" id="count" value="10" min="1">
+                <div class="quantity-input-wrapper">
+                    <div class="quantity-input-section">
+                        <input type="number" id="count" value="10" min="1" class="quantity-input">
+                    </div>
+                    <div class="quantity-slider-section">
+                        <div class="quantity-slider" id="quantitySlider">
+                            <div class="quantity-slider-track">
+                                <div class="quantity-slider-fill" id="sliderFill"></div>
+                                <div class="quantity-slider-thumb" id="sliderThumb"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">

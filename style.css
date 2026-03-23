@@ -8,6 +8,98 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* Quantity Input with Slider */
+.quantity-input-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: var(--radius-input);
+    transition: 0.2s;
+    overflow: hidden;
+}
+
+.quantity-input-wrapper:hover {
+    background-color: var(--bg-input-hover);
+}
+
+.quantity-input-wrapper:focus-within {
+    border-color: var(--primary);
+}
+
+.quantity-input-section {
+    padding: 14px 16px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quantity-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-foreground);
+    font-size: 16px;
+    outline: none;
+    padding: 0;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-slider-section {
+    padding: 12px 14px;
+}
+
+.quantity-slider {
+    width: 100%;
+    height: 6px;
+    position: relative;
+}
+
+.quantity-slider-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: visible;
+}
+
+.quantity-slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 10%;
+    background: var(--primary);
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.quantity-slider-thumb {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: var(--text-foreground);
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.15s ease;
+}
+
+.quantity-slider-thumb:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.quantity-slider-thumb:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
 :root {
     --bg-background: #000000;
     --bg-content: rgba(24, 24, 27, 0.6);
