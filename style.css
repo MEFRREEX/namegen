@@ -272,6 +272,11 @@ label {
     margin-bottom: 8px;
 }
 
+.required {
+    color: var(--danger);
+    font-weight: 600;
+}
+
 input {
     width: 100%;
     background-color: var(--bg-input);
